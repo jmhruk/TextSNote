@@ -62,6 +62,95 @@ class App(tk.Tk):
 
         n = self.notebook
 
+        def save():
+            
+            f = Frame(n)
+            
+            print(entry.get())
+            
+            f.configure(bg="gray")
+            
+            sct = ScrolledText(f, font=helv18, height=9)
+            sct.grid(row=1, column=1)
+
+            cB = Button(f, text="Create Page", command=self.createPage, width=10)
+            cB.grid(column=0, row=0)
+
+            def sFile():
+                file = asksaveasfilename(initialfile="Untitled.txt", defaultextension=".txt",filetypes=[("All Files","*.*"),
+                                            ("Text Documents","*.txt")])
+
+                file = open(file, "w")
+                file.write(sct.get(1.0, END))
+                self.file.close()
+
+                keep = askyesno(title='Confirmation', message='Keep File Open?')
+
+                if not keep:
+                    sct.delete(1.0, END)
+                        
+                return
+
+            #c = Label(f, text="",width=10)
+            #c.grid(column=0, row=1)
+
+            s = Button(f, text="Save Page", command=sFile, width=10)
+            s.place(x=0, y=30)
+
+
+            def delCTab():
+                choice = askyesno(title="Conformation!", message="Are you sure you want to delete the tab?")
+                
+                if choice:
+                    choice1 = askyesno(title="Save?", message="Would you like to save the tab?")
+                    if choice1:
+                        sFile()
+                    else:
+                        #delete file
+                        sct.delete(1.0, END)
+                        n.forget(n.select())
+   
+                return
+
+            s = Button(f, text="Delete Tab", command=delCTab, width=10)
+            s.place(x=0, y=60)
+
+            #open file button
+
+            def openF():
+                choice = askyesno(title="Conformation!", message="Do you want to overite the current file?")
+                
+                file = askopenfilename(defaultextension=".txt",filetypes=[("All Files","*.*"),
+                                        ("Text Documents","*.txt")])
+                
+                if file == "":
+                    file = None
+                else:
+                    file = open(file, "r")
+
+                    if choice:
+                        sct.insert(0.0, file.read())
+                    else:
+                        sct.insert(END, file.read())
+                    
+                    file.close()
+
+            of = Button(f, text="Open File", command=openF, width=10)
+            of.place(x=0, y=90)
+
+
+
+            n.add(f, text=entry.get())
+
+            Toplevel.destroy()
+
+            return
+
+
+        b = Button(top, text="Enter", command=save)
+        b.place(x=60, y=60)
+
+        return
 
     def createTopFrame(self):
         self.topFrame = Frame(self, width=600, height=100)
